@@ -1,11 +1,11 @@
 from crewai import Agent, Task, Crew, Process
-from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 import os
 
 # --- LLM Setup ---
-llm = ChatAnthropic(
-    model="claude-3-haiku-20240307",
-    anthropic_api_key=os.getenv("ANTHROPIC_API_KEY"),
+llm = ChatGoogleGenerativeAI(
+    model="gemini-pro",
+    google_api_key=os.getenv("GOOGLE_API_KEY"),
     temperature=0.3,
     max_tokens=2000
 )
@@ -65,12 +65,14 @@ niche_agent = Agent(
 )
 
 # ============================================================
-# TASK BUILDERS
+# TASK BUILDERS (now accept memory_context)
 # ============================================================
 
-def build_research_task(product_input):
+def build_research_task(product_input, memory_context=""):
     return Task(
         description=f"""Research this product for dropshipping viability: {product_input}
+
+        {memory_context}
 
         Provide a comprehensive analysis including:
         1. Product overview and target audience
@@ -90,9 +92,11 @@ def build_research_task(product_input):
         expected_output="Detailed product research report with scores"
     )
 
-def build_scoring_task(product_input):
+def build_scoring_task(product_input, memory_context=""):
     return Task(
         description=f"""Score this product for dropshipping: {product_input}
+
+        {memory_context}
 
         Provide numerical scores and analysis:
         - Demand Score (0-100): based on search trends and social media interest
@@ -108,9 +112,11 @@ def build_scoring_task(product_input):
         expected_output="Scored product analysis with verdict"
     )
 
-def build_niche_task(niche_input):
+def build_niche_task(niche_input, memory_context=""):
     return Task(
         description=f"""Analyze this product niche for dropshipping: {niche_input}
+
+        {memory_context}
 
         Provide:
         1. Niche overview - market size, buyer demographics, average order value
@@ -127,9 +133,11 @@ def build_niche_task(niche_input):
         expected_output="Complete niche analysis report with scores"
     )
 
-def build_content_task(product_input):
+def build_content_task(product_input, memory_context=""):
     return Task(
         description=f"""Create a complete content package for this product: {product_input}
+
+        {memory_context}
 
         Generate:
         1. 3 TikTok captions (hook-first, punchy, with hashtags)
@@ -148,9 +156,11 @@ def build_content_task(product_input):
         expected_output="Complete content package for all platforms"
     )
 
-def build_comparison_task(products_input):
+def build_comparison_task(products_input, memory_context=""):
     return Task(
         description=f"""Compare these products for dropshipping potential: {products_input}
+
+        {memory_context}
 
         For each product provide:
         - Demand score (0-100)
@@ -173,11 +183,11 @@ def build_comparison_task(products_input):
     )
 
 # ============================================================
-# CREW RUNNERS
+# CREW RUNNERS (now accept memory_context)
 # ============================================================
 
-def run_product_research(product_input: str) -> str:
-    task = build_research_task(product_input)
+def run_product_research(product_input: str, memory_context: str = "") -> str:
+    task = build_research_task(product_input, memory_context)
     crew = Crew(
         agents=[research_agent, scoring_agent],
         tasks=[task],
@@ -187,8 +197,8 @@ def run_product_research(product_input: str) -> str:
     result = crew.kickoff()
     return str(result)
 
-def run_niche_analysis(niche_input: str) -> str:
-    task = build_niche_task(niche_input)
+def run_niche_analysis(niche_input: str, memory_context: str = "") -> str:
+    task = build_niche_task(niche_input, memory_context)
     crew = Crew(
         agents=[niche_agent],
         tasks=[task],
@@ -198,8 +208,8 @@ def run_niche_analysis(niche_input: str) -> str:
     result = crew.kickoff()
     return str(result)
 
-def run_product_comparison(products_input: str) -> str:
-    task = build_comparison_task(products_input)
+def run_product_comparison(products_input: str, memory_context: str = "") -> str:
+    task = build_comparison_task(products_input, memory_context)
     crew = Crew(
         agents=[scoring_agent],
         tasks=[task],
@@ -209,8 +219,8 @@ def run_product_comparison(products_input: str) -> str:
     result = crew.kickoff()
     return str(result)
 
-def run_content_brief(product_input: str) -> str:
-    task = build_content_task(product_input)
+def run_content_brief(product_input: str, memory_context: str = "") -> str:
+    task = build_content_task(product_input, memory_context)
     crew = Crew(
         agents=[content_agent],
         tasks=[task],
