@@ -1,18 +1,6 @@
-fastapi==0.115.0
-uvicorn[standard]==0.32.0
-pydantic==2.10.4
-python-dotenv==1.0.1
-
-# CrewAI - Use stable version
-crewai==0.86.0
-crewai-tools==0.17.0
-
-# LangChain - Compatible with CrewAI 0.86
-langchain==0.3.13
-langchain-anthropic==0.3.0
-
-# Anthropic/Claude - REQUIRED for your agents.py
-anthropic==0.40.0
-
-# HTTP client
-httpx==0.28.1
+fastapi
+uvicorn[standard]
+httpx
+supabase
+pydantic
+python-dotenv
