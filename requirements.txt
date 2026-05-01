@@ -8,9 +8,9 @@ httpx==0.27.2
 crewai==0.51.0
 crewai-tools==0.8.3
 
-# === LangChain (let crewai pull compatible versions, but pin for safety) ===
-langchain==0.2.0
-langchain-community==0.2.0
+# === LangChain (let crewai pull compatible versions) ===
+langchain
+langchain-community
 langchain-google-genai==1.0.4
 
 # === Pydantic (must be >=2.8 for crewai 0.51.0) ===
